@@ -8,12 +8,44 @@ body {
   font-family: "Arial", sans-serif;
 }
 
+.calculator-container {
+  position: relative;
+  padding-top: 20px; /* Add some space above the calculator */
+}
+
 .calculator {
+  position: relative;
+  z-index: 2;
   background-color: #e0e0e0;
   border-radius: 15px;
   padding: 20px;
   box-shadow: 0 0 0 2px #d0d0d0, 0 0 0 5px #c0c0c0, 0 5px 15px rgba(0, 0, 0, 0.3);
-  width: 250px; /* Fixed width */
+  width: 250px;
+}
+
+.sliding-image {
+  position: absolute;
+  top: 20px; /* Align with the top of the calculator */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1; /* Behind the calculator */
+  transition: top 1s ease-in-out;
+  pointer-events: none; /* Prevent interference with calculator clicks */
+}
+
+.sliding-image img {
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.sliding-image.show {
+  top: -180px; /* Adjust to control how much of the image is visible */
+}
+
+.sliding-image.show img {
+  opacity: 1;
 }
 
 .display {
@@ -101,3 +133,5 @@ body {
 .zero {
   grid-column: span 2;
 }
+
+/* CODE FOR SLIDING IMAGE */

@@ -6,6 +6,9 @@ const clearButton = document.querySelector(".clear");
 const operatorButtons = document.querySelectorAll(".operator");
 const equalsButton = document.querySelector(".equals");
 const MAX_DISPLAY_LENGTH = 15; // Maximum number of characters to display
+const SPECIAL_NUMBER = "8008135";
+const SPECIAL_DISPLAY = "( . Y . )";
+const slidingImage = document.querySelector(".sliding-image");
 
 let currentDisplay = "0";
 let firstNumber = null;
@@ -17,17 +20,12 @@ let readyForSecondNumber = false;
 
 // Function to update the display
 function updateDisplay() {
-  display.textContent = truncateDisplay(currentDisplay);
-}
-
-function inputNumber(number) {
-  if (readyForSecondNumber) {
-    currentDisplay = number;
-    readyForSecondNumber = false;
+  if (currentDisplay === SPECIAL_NUMBER) {
+    console.log("Special number detected, changing display");
+    display.textContent = SPECIAL_DISPLAY;
   } else {
-    currentDisplay = currentDisplay === "0" ? number : currentDisplay + number;
+    display.textContent = truncateDisplay(currentDisplay);
   }
-  updateDisplay();
 }
 
 function calculate(a, b, op) {
@@ -46,7 +44,15 @@ function calculate(a, b, op) {
   }
 }
 
+// Function to perform calculation
 function performCalculation() {
+  console.log("performCalculation called, currentDisplay:", currentDisplay);
+  if (currentDisplay === SPECIAL_NUMBER || display.textContent === SPECIAL_DISPLAY) {
+    console.log("Special display detected, triggering sliding image");
+    toggleSlidingImage();
+    return;
+  }
+
   if (firstNumber !== null && operation) {
     const secondNumber = parseFloat(currentDisplay);
     const result = calculate(firstNumber, secondNumber, operation);
@@ -57,6 +63,26 @@ function performCalculation() {
     hasDecimal = currentDisplay.includes(".");
     updateDisplay();
   }
+}
+
+function inputNumber(number) {
+  if (readyForSecondNumber) {
+    currentDisplay = number;
+    readyForSecondNumber = false;
+  } else {
+    currentDisplay = currentDisplay === "0" ? number : currentDisplay + number;
+  }
+  updateDisplay();
+}
+
+// Function to handle clear button
+function handleClear() {
+  currentDisplay = "0";
+  firstNumber = null;
+  operation = null;
+  hasDecimal = false;
+  readyForSecondNumber = false;
+  updateDisplay();
 }
 
 //Adding keyboard support
@@ -130,6 +156,17 @@ function truncateDisplay(text) {
   return text;
 }
 
+// Function to show and hide the sliding image
+function toggleSlidingImage() {
+  console.log("toggleSlidingImage called");
+  slidingImage.classList.add("show");
+  console.log('Added "show" class');
+  setTimeout(() => {
+    slidingImage.classList.remove("show");
+    console.log('Removed "show" class');
+  }, 3000); // 3s display time before sliding back
+}
+
 //EVENT LISTENERS
 
 // Add keydown event listener to the document
@@ -173,17 +210,12 @@ operatorButtons.forEach((button) => {
 });
 
 //Add click event listener to clear button
-clearButton.addEventListener("click", () => {
-  currentDisplay = "0";
-  firstNumber = null;
-  operation = null;
-  hasDecimal = false;
-  readyForSecondNumber = false;
-  updateDisplay();
-});
+clearButton.addEventListener("click", handleClear);
 
 //Add click event listener to equals button
 equalsButton.addEventListener("click", performCalculation);
 
 // Initialize display
 updateDisplay();
+
+console.log("Sliding image element:", slidingImage);
